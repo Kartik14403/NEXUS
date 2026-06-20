@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NEXUS - AI Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body class="dark">
+  <!-- ChatGPT-Style Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <button id="sidebarToggle" class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+          <i class="fas fa-robot"></i>
+          <span>NEXUS</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="toggleThemeBtn" class="theme-toggle">
+          <i class="fas fa-sun"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Layout Container -->
+  <div class="app-container">
+    <!-- ChatGPT-Style Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button id="newChatBtn" class="new-chat-btn">
+          <i class="fas fa-plus"></i>
+          <span>New chat</span>
+        </button>
+      </div>
+      
+      <div class="sidebar-content">
+        <!-- Recent Chats Section -->
+        <div class="sidebar-section">
+          <div class="section-header">
+            <span class="section-title">Recent</span>
+            <button class="section-toggle" id="recentToggle">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
+          <div class="section-content" id="recentContent">
+            <div class="chat-item active">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">Python function sort</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chat-item">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">Write a story about robot</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chat-item">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">FastAPI vs Flask</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="sidebar-section">
+          <div class="section-header">
+            <span class="section-title">Previous 7 Days</span>
+            <button class="section-toggle" id="historyToggle">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
+          <div class="section-content" id="historyContent">
+            <div class="chat-item">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">AI Ethics Discussion</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chat-item">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">Database Design Help</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Archived Section -->
+        <div class="sidebar-section">
+          <div class="section-header">
+            <span class="section-title">Previous 30 Days</span>
+            <button class="section-toggle collapsed" id="archivedToggle">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
+          <div class="section-content collapsed" id="archivedContent">
+            <div class="chat-item">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">Machine Learning Guide</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chat-item">
+              <i class="fas fa-message"></i>
+              <span class="chat-item-text">React Tutorial</span>
+              <div class="chat-item-menu">
+                <button class="chat-menu-btn">
+                  <i class="fas fa-ellipsis"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="sidebar-controls">
+          <button id="clearHistoryBtn" class="control-btn">
+            <i class="fas fa-trash"></i>
+            <span>Clear conversations</span>
+          </button>
+          <button id="exportBtn" class="control-btn">
+            <i class="fas fa-download"></i>
+            <span>Export data</span>
+          </button>
+          <button id="settingsBtnSidebar" class="control-btn">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="chat-container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen" style="display: none;">
+          <div class="welcome-content">
+            <div class="welcome-logo">
+              <i class="fas fa-robot"></i>
+            </div>
+            <h1>How can I help you today?</h1>
+            <div class="example-prompts">
+              <div class="prompt-card" onclick="sendExamplePrompt('Write a story about a robot learning to paint')">
+                <i class="fas fa-palette"></i>
+                <span>Write a story</span>
+              </div>
+              <div class="prompt-card" onclick="sendExamplePrompt('Explain quantum computing in simple terms')">
+                <i class="fas fa-lightbulb"></i>
+                <span>Explain a concept</span>
+              </div>
+              <div class="prompt-card" onclick="sendExamplePrompt('Help me write a Python function to sort a list')">
+                <i class="fas fa-code"></i>
+                <span>Help with code</span>
+              </div>
+              <div class="prompt-card" onclick="sendExamplePrompt('Give me creative ideas for a birthday party')">
+                <i class="fas fa-star"></i>
+                <span>Creative ideas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Chat Messages Area -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Sample Messages -->
+          <div class="message user">
+            <div class="message-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="message-content">
+              <div class="message-text">Help me write a Python function to sort a list</div>
+            </div>
+          </div>
+
+          <div class="message assistant">
+            <div class="message-avatar">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+              <div class="message-text">
+                <p><strong>Python</strong></p>
+                <pre><code>def sort_list(nums):
+    """
+    Sorts a list of integers.
+    
+    Args:
+        nums: The list to sort.
+    
+    Returns:
+        The sorted list.
+    """
+    
+    # Use the built-in sort() method to sort the list.
+    nums.sort()
+    
+    return nums</code></pre>
+
+                <p><strong>Example Usage:</strong></p>
+                <pre><code># Create a list of integers to sort.
+nums = [5, 2, 8, 3, 1]
+
+# Sort the list.
+sorted_nums = sort_list(nums)
+
+# Print the sorted list.
+print(sorted_nums)</code></pre>
+
+                <p><strong>Output:</strong></p>
+                <pre><code>[1, 2, 3, 5, 8]</code></pre>
+
+                <p><strong>Explanation:</strong></p>
+                <ol>
+                  <li>The `sort_list()` function takes a list of integers as input.</li>
+                  <li>It uses the `sort()` method to sort the list in ascending order.</li>
+                  <li>The function returns the sorted list.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Input Area -->
+        <div class="input-container">
+          <div class="input-area">
+            <button id="attachBtn" class="attach-btn">
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <textarea id="userInput" placeholder="Message NEXUS..." rows="1"></textarea>
+            <button id="sendBtn" class="send-btn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Notification Banner -->
+  <div class="notification-banner hidden" id="notificationBanner">
+    <div class="notification-content">
+      <i class="notification-icon fas fa-exclamation-triangle"></i>
+      <span class="notification-message" id="notificationMessage">Backend connection failed</span>
+    </div>
+    <button class="notification-close" id="notificationClose">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top hidden" id="scrollToTopBtn" title="Scroll to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button class="close-settings" id="closeSettings">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="settings-body">
+        <div class="settings-section">
+          <h3>Account</h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Username</label>
+              <span class="setting-description">Your display name</span>
+            </div>
+            <input type="text" id="usernameInput" value="NEXUS User" class="setting-input">
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Email</label>
+              <span class="setting-description">Your email address</span>
+            </div>
+            <input type="email" id="emailInput" value="user@nexus.com" class="setting-input">
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Appearance</h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Theme</label>
+              <span class="setting-description">Choose your preferred theme</span>
+            </div>
+            <div class="theme-selector">
+              <button class="theme-option" data-theme="light">
+                <i class="fas fa-sun"></i>
+                <span>Light</span>
+              </button>
+              <button class="theme-option" data-theme="dark">
+                <i class="fas fa-moon"></i>
+                <span>Dark</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>AI Model</h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Default AI Model</label>
+              <span class="setting-description">Choose your preferred AI model</span>
+            </div>
+            <select id="aiModelSelect" class="setting-input">
+              <option value="gemma:2b">Gemma 2B</option>
+              <option value="llama3">Llama 3</option>
+              <option value="llama3.1">Llama 3.1</option>
+              <option value="codellama">Code Llama</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Chat Settings</h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Auto-save conversations</label>
+              <span class="setting-description">Automatically save chat history</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="autoSaveToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Show typing indicator</label>
+              <span class="setting-description">Display when NEXUS is typing</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="typingIndicatorToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>Data & Privacy</h3>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Export all data</label>
+              <span class="setting-description">Download your complete chat history</span>
+            </div>
+            <button class="action-btn" id="exportAllData">
+              <i class="fas fa-download"></i>
+              <span>Export</span>
+            </button>
+          </div>
+          
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Clear all data</label>
+              <span class="setting-description">Permanently delete all chat history</span>
+            </div>
+            <button class="action-btn danger" id="clearAllData">
+              <i class="fas fa-trash"></i>
+              <span>Clear All</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="settings-footer">
+        <button class="save-settings" id="saveSettings">
+          <i class="fas fa-save"></i>
+          <span>Save Changes</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
