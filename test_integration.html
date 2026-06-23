@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIS Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; }
+        #result { margin-top: 10px; padding: 10px; background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <h1>ARIS Integration Test</h1>
+    
+    <div class="test-section">
+        <h3>Backend Health Check</h3>
+        <button onclick="testHealth()">Test Backend</button>
+        <div id="healthResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Chat Test</h3>
+        <input type="text" id="testMessage" placeholder="Enter test message" value="Hello, how are you?">
+        <button onclick="testChat()">Send Message</button>
+        <div id="chatResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Frontend Test</h3>
+        <button onclick="testFrontend()">Test Frontend Elements</button>
+        <div id="frontendResult"></div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            try {
+                const response = await fetch('http://localhost:5000/health');
+                const data = await response.json();
+                resultDiv.innerHTML = `<div class="success">✅ Backend is running: ${data.message}</div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Backend error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testChat() {
+            const resultDiv = document.getElementById('chatResult');
+            const message = document.getElementById('testMessage').value;
+            
+            try {
+                const response = await fetch('http://localhost:5000/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: message })
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<div class="success">✅ Response: ${data.response}</div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Chat error: ${error.message}</div>`;
+            }
+        }
+        
+        function testFrontend() {
+            const resultDiv = document.getElementById('frontendResult');
+            const tests = [
+                { name: 'Send Button', element: document.getElementById('sendBtn'), found: false },
+                { name: 'User Input', element: document.getElementById('userInput'), found: false },
+                { name: 'Chat Messages', element: document.getElementById('chatMessages'), found: false },
+                { name: 'Sidebar Toggle', element: document.getElementById('sidebarToggle'), found: false }
+            ];
+            
+            let results = '<h4>Frontend Element Tests:</h4>';
+            tests.forEach(test => {
+                if (test.element) {
+                    test.found = true;
+                    results += `<div class="success">✅ ${test.name}: Found</div>`;
+                } else {
+                    results += `<div class="error">❌ ${test.name}: Not found</div>`;
+                }
+            });
+            
+            resultDiv.innerHTML = results;
+        }
+        
+        // Auto-run health check on load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
